@@ -9,7 +9,7 @@ function dev_version {
     cached dev_version && return
 
     declare master_describe master_tag master_commits master_hash
-    master_describe=$(git describe --first-parent origin/master)
+    master_describe=$(git -C $GIT_ROOT describe --first-parent origin/master)
     read master_tag master_commits master_hash <<<"${master_describe//-/ }"
     [[ $master_tag == v* && $master_commits -gt 0 && -n $master_hash ]] || die "failed git describe"
 
@@ -32,7 +32,7 @@ function git_revision {
     cached git_revision && return
 
     # count commits not on master
-    output "$(git log --oneline origin/master.. | wc -l)"
+    output "$(git -C $GIT_ROOT log --oneline origin/master.. | wc -l)"
 }
 
 function git_changelog_date {
