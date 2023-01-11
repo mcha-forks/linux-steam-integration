@@ -1,0 +1,48 @@
+#!/bin/bash
+
+function cached {
+    declare v=${OUTPUT[$1]}
+    [[ -n $v ]] && echo -n "$v"
+}
+
+function dev_version {
+    cached dev_version && return
+
+    declare master_describe master_tag master_commits master_hash
+    master_describe=$(git describe --first-parent origin/master)
+    read master_tag master_commits master_hash <<<"${master_describe//-/ }"
+    [[ $master_tag == v* && $master_commits -gt 0 && -n $master_hash ]] || die "failed git describe"
+
+    output "${master_tag}-dev+${master_commits}-${master_hash}"
+}
+
+function git_version {
+    cached git_version && return
+
+    declare v
+    v=$(dev_version) # v0.5.0-dev+1080-g971e0ca90
+    v=${v#v}                # 0.5.0-dev+1080-g971e0ca90
+    v=${v/-/\~}             # 0.5.0~dev+1080-g971e0ca90
+    v=${v//[+-]/.}          # 0.5.0~dev.1080.g971e0ca90
+
+    output "$v"
+}
+
+function git_revision {
+    cached git_revision && return
+
+    # count commits not on master
+    output "$(git log --oneline origin/master.. | wc -l)"
+}
+
+function git_changelog_date {
+    cached git_changelog_date && return
+    output "$(date +'%a %b %d %Y')"
+}
+
+function git_changelog_version {
+    cached git_changelog_version && return
+    git_version &>/dev/null # cache
+    git_revision &>/dev/null # cache
+    output "$(git_version)-$(git_revision)"
+}
