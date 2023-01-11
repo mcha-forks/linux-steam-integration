@@ -8,6 +8,7 @@ function cached {
 function dev_version {
     cached dev_version && return
 
+    git -C $GIT_ROOT fetch origin master # ensure we could find ref
     declare master_describe master_tag master_commits master_hash
     master_describe=$(git -C $GIT_ROOT describe --first-parent origin/master)
     read master_tag master_commits master_hash <<<"${master_describe//-/ }"
