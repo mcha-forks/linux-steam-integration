@@ -1,0 +1,24 @@
+name: 'Rebase upstream changes'
+
+on:
+  schedule:
+    - cron:  '0 7 * * *'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    name: Rebase to upstream
+
+    steps:
+    - name: Checkout target repo
+      uses: actions/checkout@v2
+      with:
+        ref: copr
+
+    - name: Sync upstream changes
+      uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
+      with:
+        target_sync_branch: copr
+        target_repo_token: ${{ secrets.GITHUB_TOKEN }}
+        upstream_sync_branch: master
+        upstream_sync_repo: getsolus/linux-steam-integration
