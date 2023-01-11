@@ -5,7 +5,7 @@ Summary: Linux Steam Integration (LSI)
 Name:    {{{git_name name="linux-steam-integration"}}}
 Version: {{{git_version}}}
 Release: {{{git_revision}}}%{?dist}
-License: LGPLv2.1
+License: LGPL-2.1-only
 URL:     https://github.com/getsolus/linux-steam-integration
 
 BuildRequires: gcc
